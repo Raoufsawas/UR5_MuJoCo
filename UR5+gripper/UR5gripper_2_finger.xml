@@ -1,0 +1,411 @@
+<mujoco model="ur5gripper">
+    <compiler angle="radian"
+              inertiafromgeom="true"
+              texturedir="textures/"
+              meshdir="mesh/visual/"/>
+    <option timestep="2e-3"
+            iterations="100"
+            tolerance="1e-10"
+            impratio="10"/>
+    <default>
+        <site rgba="0.8 0.6 0.7 0.3" type="ellipsoid" group="3"/>
+        <geom contype='1' conaffinity='1' condim='4'  margin="1e-3" solref=".01 1" solimp=".99 .99 .01" />
+        <joint armature="0.01" damping=".1"/>
+        <default class="UR5">
+            <joint damping='85'/>
+        </default>
+        <default class="UR5e">
+            <joint damping='45'/>
+        </default>
+        <default class="GRIPPER">
+            <joint damping='5'/>
+        </default>
+    </default>
+
+    <visual>
+        <map fogstart="3" fogend="5" znear="0.05"/>
+        <quality shadowsize="2048"/>
+        <scale framelength="0.1"
+               framewidth="0.005"
+               contactwidth="0.1"
+               contactheight="0.005"
+               forcewidth="0.01"
+               />
+    </visual>
+
+    <!--Assets-->
+    <asset>
+        <!--Meshes-->
+        <mesh name="base"           file="base.stl"     />
+        <mesh name="shoulder"       file="shoulder.stl" />
+        <mesh name="upperarm"       file="upperarm.stl" />
+        <mesh name="forearm"        file="forearm.stl"  />
+        <mesh name="wrist1"         file="wrist1.stl"   />
+        <mesh name="wrist2"         file="wrist2.stl"   />
+        <mesh name="wrist3"         file="wrist3.stl"   />
+        <mesh name="tube"           file="tube_9_5.stl" scale="2 2 1" />
+        <mesh name="tube2"           file="tube_9_5.stl" scale="2.5 2.5 1" />
+        <mesh name="tube3"           file="tube_9_5.stl" scale="3 3 1" />
+        <mesh name="tube4"           file="tube_9_5.stl" scale="4.5 4.5 1" />
+        <mesh name="tube5"           file="tube_9_5.stl" scale="5.5 5.5 1" />
+        <mesh name="tube6"           file="tube_9_5.stl" scale="6.5 6.5 1" />
+        
+        <mesh name="robotiq_85_base_link_coarse" file="robotiq_85_base_link_coarse.STL" />
+        <mesh name="inner_knuckle_coarse" file="inner_knuckle_coarse.STL" />
+        <mesh name="inner_finger_coarse" file="inner_finger_coarse.STL" />
+        <mesh name="outer_knuckle_coarse" file="outer_knuckle_coarse.STL" />
+        <mesh name="outer_finger_coarse" file="outer_finger_coarse.STL" />
+
+        <!--Textures-->
+        <texture name="ur5_tex"     type="2d"       builtin="flat" height="32" width="32" rgb1="0.45 0.45 0.45" />
+        <texture name="gripper_tex" type="2d"       builtin="flat" height="32" width="32" rgb1="0.45 0.45 0.45" rgb2="0 0 0"/>
+        <texture name="bench_tex"   type="2d"       builtin="flat" height="32" width="32" rgb1="0.7 0.7 0.7" />
+        <texture name="sky_tex"     type="skybox"   builtin="gradient" width="100" height="100" rgb1="1 1 1" rgb2="0.3 0.3 0.8" />
+        <texture name="texgeom"     type="cube"     builtin="flat" mark="cross" width="127" height="1278" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1" random="0.01" />
+        <texture name="floor_tex"   type="2d"        builtin="checker" rgb1=".2 .3 .4" rgb2=".1 .2 .3" width="100" height="100" />
+        <texture name="wood"        type="cube"     file="wood2.png"/>
+        <texture name="metal"        type="cube"     file="metal2.png"/>
+        <!--Materials-->
+        <material name="ur5_mat"        texture="ur5_tex"   shininess="0.9" specular="0.75" reflectance="0.3"/>
+        <material name="gripper_mat"    texture="gripper_tex"   shininess="0.9" specular="0.75" reflectance="0.4"/>
+        <material name='floor_mat'      texture="floor_tex"  shininess="0.8" texrepeat="10 10" specular="0.7"  reflectance="0.5" />
+        <material name='geom'           texture="texgeom"   texuniform="true" />
+        <material name="bench_mat"      texture="metal"   shininess="0.1" specular="0.5" reflectance="0.2"/>
+        <material name="tablecube"      texture="wood" rgba=".8 .8 .8 1"/>
+        
+        <material name="RobMat" specular="0.9" shininess="0.5" reflectance="0" rgba="0.7 0.7 0.7 1" emission="0.1" />
+        <material name="GriMat" specular="0.9" shininess="0.5" reflectance="0" rgba="0.1 0.1 0.1 1" emission="0.1" />
+        <material name="BasketMat" specular="0" shininess="0" reflectance="0" rgba="0.26 0.16 0.16796875 1" emission="0" />
+    </asset>
+
+    <!--Contacts-->
+    <contact>
+        <exclude body1="box_link" body2="base_link"/>
+        <exclude body1="base_link" body2="shoulder_link"/>
+        <exclude body1="shoulder_link" body2="upper_arm_link"/>
+        <exclude body1="upper_arm_link" body2="forearm_link"/>
+        <exclude body1="forearm_link" body2="wrist_1_link"/>
+        <exclude body1="wrist_1_link" body2="wrist_2_link"/>
+        <exclude body1="wrist_2_link" body2="wrist_3_link"/>
+        <exclude body1="ee_link" body2="wrist_3_link"/>
+    </contact>
+
+
+    <!--MODEL DESCRIPTION-->
+    <worldbody>
+        <!--Lighting parameters-->
+        <light name="light3" mode="targetbody" target="box_link" directional="true" pos="1 -1 3" />
+        <!-- <light name="light3" mode="targetbody" target="box_link" directional="true" pos="1 1 3" /> -->
+        <!--Camera parameters-->
+        <camera name="main1" mode="fixed" target="ee_link" pos="2 2 2.7" axisangle="2 2 -2 1"/>
+        <camera name="top_down" mode="fixed" target="ee_link" pos="0 -0.6 2.0" axisangle="2 2 2 0"/>
+        <camera name="side" mode="fixed" target="ee_link" pos="0.8 -0.6 1.0" quat="0.5 0.5 0.5 0.5"/>
+        <!--Floor Property-->
+        <geom name='floor' material="floor_mat" pos='0 0 0' size='2.5 2.5 0.1'  type='plane' />
+
+
+        <body name="table" pos="0 -0.6 0.0" euler="0 0 1.57">
+            <geom size=".2608 0.473 .03" pos ="0 0 0.855" type="box" material="tablecube"/>
+            <!-- <geom size=".2 .28 .03" pos ="0 0 0.86" type="box" material="bench_mat" friction="2 0.005 0.0001"/> -->
+            <geom size=".03 .27 .44" pos ="0.23 0.0 0.44" type="box" material="tablecube"/>
+            <geom size=".03 .27 .44" pos ="-0.23 0.0 0.44" type="box" material="tablecube"/>
+            <geom size=".26 .03 .44" pos ="0.0 0.3 0.44" type="box" material="bench_mat"/>
+            <geom size=".26 .03 .44" pos ="0.0 -0.3 0.44" type="box" material="bench_mat"/>
+            <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+        </body>
+
+        <body name="table2" pos="0 0.6 0.0" euler="0 0 1.57">
+            <geom size=".2608 0.473 .03" pos ="0 0 0.855" type="box" material="tablecube"/>
+            <!-- <geom size=".2 .28 .03" pos ="0 0 0.86" type="box" material="bench_mat" friction="2 0.005 0.0001"/> -->
+            <geom size=".03 0.473 .44" pos ="0.23 0.0 0.44" type="box" material="tablecube"/>
+            <geom size=".03 0.473 .44" pos ="-0.23 0.0 0.44" type="box" material="tablecube"/>
+            <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+        </body>
+            <body name="table3" pos="0.8 0 0.0" euler="0 0 1.57">
+             <!-- <geom size=".2 .28 .03" pos ="0 0 0.86" type="box" material="bench_mat" friction="2 0.005 0.0001"/> -->
+            <geom size="0.865 .27 .44" pos ="0 0.0 0.44" type="box" material="tablecube"/>
+            <geom size=".03 .27 .44" pos ="-0.23 0.0 0.44" type="box" material="tablecube"/>
+            <geom size="0.865 .03 .44" pos ="0.0 0.3 0.44" type="box" material="bench_mat"/>
+            <geom size="0.865 .03 .44" pos ="0.0 -0.3 0.44" type="box" material="bench_mat"/>
+            <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+        </body>
+        <body name="table4" pos="-0.8 0 0.0" euler="0 0 1.57">
+            <!-- <geom size=".2 .28 .03" pos ="0 0 0.86" type="box" material="bench_mat" friction="2 0.005 0.0001"/> -->
+            <geom size="0.865 .27 .44" pos ="0 0.0 0.44" type="box" material="tablecube"/>
+            <geom size=".03 .27 .44" pos ="-0.23 0.0 0.44" type="box" material="tablecube"/>
+            <geom size="0.865 .03 .44" pos ="0.0 0.3 0.44" type="box" material="bench_mat"/>
+            <geom size="0.865 .03 .44" pos ="0.0 -0.3 0.44" type="box" material="bench_mat"/>
+            <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+        </body>
+
+
+
+
+        <body name="box_link" pos="0 0 0.435">
+            <!--<geom size=".3 .2 .435" type="box" material="bench_mat"/>-->
+            <geom size=".29 .19 .03" pos ="0 0 0.4" type="box" material="bench_mat"/>
+            <geom size=".29 .19 .03" pos ="0 0 -0.2" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .435" pos =".26 .16 0" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .435" pos ="-.26 .16 0" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .435" pos =".26 -.16 0" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .435" pos ="-.26 -.16 0" type="box" material="bench_mat"/>
+            <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+            <body name="base_link" pos="0 0 0.435">
+                <inertial pos="0 0 0" quat="0.5 0.5 -0.5 0.5" mass="4" diaginertia="0.0072 0.00443333 0.00443333" />
+                <geom type="mesh"  mesh="base" material="RobMat"/>
+                <geom name="base_cap" type="cylinder" pos="0 0 0.14" size="0.06 0.02" rgba="0.596 0.96 1 1" material="RobMat" contype="0" conaffinity="0" />
+
+                <body name="shoulder_link" pos="0 0 0.089159">
+                    <inertial pos="0 0 0" mass="3.7" diaginertia="0.0102675 0.0102675 0.00666" />
+                    <joint name="shoulder_pan_joint" class="UR5" pos="0 0 0" axis="0 0 1" limited="true" range="-3.14159 3.14159" />
+                    <geom type="mesh"  mesh="shoulder" material="RobMat"/>
+                    <geom name="shoulder_cap" type="cylinder" pos="0 0.185 0" quat="0.707107 0.707107 0 0" size="0.06 0.02" rgba="0.596 0.96 1 1" material="RobMat" contype="0" conaffinity="0" />
+
+                    <body name="upper_arm_link" pos="0 0.13585 0" quat="0.707107 0 0.707107 0">
+                        <inertial pos="0 0 0.28" mass="8.393" diaginertia="0.226891 0.226891 0.0151074" />
+                        <joint name="shoulder_lift_joint" class="UR5" pos="0 0 0" axis="0 1 0" limited="true" range="-3.14159 3.14159" /> <!--Range= -3.14159 3.14159-->
+                        <geom type="mesh"  mesh="upperarm" material="RobMat"/>
+                        <body name="forearm_link" pos="0 -0.1197 0.425">
+                            <inertial pos="0 0 0.25" mass="2.275" diaginertia="0.0494433 0.0494433 0.004095" />
+                            <joint name="elbow_joint" class="UR5" pos="0 0 0" axis="0 1 0" limited="true" range="-3.14159 3.14159" />
+                            <geom type="mesh"  mesh="forearm" material="RobMat"/>
+                            <geom name="forearm_cap" type="cylinder" pos="0 0.17 0" quat="0.707107 0.707107 0 0" size="0.06 0.02" rgba="0.596 0.96 1 1" material="RobMat" contype="0" conaffinity="0" />#
+
+                            <body name="wrist_1_link" pos="0 0 0.39225" quat="0.707107 0 0.707107 0">
+                                <inertial pos="0 0 0" quat="0.5 0.5 -0.5 0.5" mass="1.219" diaginertia="0.21942 0.111173 0.111173" />
+                                <joint name="wrist_1_joint" class="UR5e" pos="0 0 0" axis="0 1 0" limited="true" range="-3.14159 3.14159" />
+                                <geom type="mesh"  mesh="wrist1" material="RobMat"/>
+                                <geom name="wrist1_cap" type="cylinder" pos="0 -0.045 0" quat="0.707107 0.707107 0 0" size="0.04 0.015" rgba="0.596 0.96 1 1" material="RobMat" contype="0" conaffinity="0" />
+                                
+                                <body name="wrist_2_link" pos="0 0.093 0">
+                                    <inertial pos="0 0 0" quat="0.5 0.5 -0.5 0.5" mass="1.219" diaginertia="0.21942 0.111173 0.111173" />
+                                    <joint name="wrist_2_joint" class="UR5e" pos="0 0 0" axis="0 0 1" limited="true" range="-3.14159 3.14159" />
+                                    <geom type="mesh"  mesh="wrist2" material="RobMat"/>
+                                    <geom name="wrist2_cap" type="cylinder" pos="0 0 -0.045" quat="0.707107 0 0 0.707107" size="0.04 0.015" rgba="0.596 0.96 1 1" material="RobMat" contype="0" conaffinity="0" />
+
+                                    <body name="wrist_3_link" pos="0 0 0.09465" quat="0.3207107 0 -0.04207107 0" >
+                                        <inertial pos="0 0 0" quat="0.5 0.5 -0.5 0.5" mass="0.1879" diaginertia="0.033822 0.0171365 0.0171365" />
+                                        <joint name="wrist_3_joint" class="UR5e" pos="0 0 0" axis="0 1 0" limited="true" range="-3.14159 3.14159" />
+                                        <geom type="mesh"  mesh="wrist3" material="RobMat"/>
+                                         <geom name="wrist3_cap" type="cylinder" pos="0 -0.045 0" quat="0.707107 0.707107 0 0" size="0.04 0.015" rgba="0.596 0.96 1 1" material="RobMat" contype="0" conaffinity="0" />
+
+                                         <site group="1" name="tourqe" pos="0 0.06 0" rgba="0 0 1 1" size="0.01 0.01 0.01" type="sphere" />
+                                         <site group="1" name="force" pos="0 0.04 0"  rgba="0 1 1 1" size="0.01 0.01 0.01" type="sphere"/>
+
+                                        
+                                        <body name="ee_link" pos="0 0.0823 0" quat="0.707107 0 0 0.707107">
+                                            <inertial pos="-0.01 0 0" mass="0.001" diaginertia="1.66667e-08 1.66667e-08 1.66667e-08" />
+                                            <geom size="0.005 0.005 0.005" pos="-0.01 0 0" type="box" />
+                                        <!--GRIPPER 0 .407107-->
+                                             <!-- <joint name="ee_to_base" pos="0 0 0" axis="1 0 0" limited="true" range="0 0" /> -->
+                                            <body name="robotiq_85_base_link" pos="0 0 0" quat="0.5 0.5 0.5 0.5 ">
+                                            <inertial pos="0.00021987 -2.3546e-10 0.030163"  quat="0.707058 0.00723369 0.00723345 0.707081" mass="0.30915" diaginertia="0.00030737 0.000289758 0.000199102" />
+                                            <geom type="mesh" rgba="0.1 0.1 0.1 1" friction="0.8 0.8 0.8" mesh="robotiq_85_base_link_coarse" />
+                                            <!--geom name="tube" pos="0 0.05 0.12" size="0.0113 0.06 0.01" type="box" material="bench_mat"  /-->
+           
+            <geom name="plug_1"   pos="0  0.01 0.12" size=" 0.0165 0.04 0.0113" type="box" material="RobMat"/>
+
+            <geom name="plug_2" mass="0"  pos="0  0.05 0.12" size="  0.04 0.01 0.0165 " type="box" material="tablecube" />
+             <geom name="plug_3" mass="0" pos="-0.0259 0.1 0.12" size="0.0053 0.067 0.0065" type="box" material="RobMat"  />
+             <geom name="plug_4" mass="0." pos="0.0279 0.1 0.12" size="0.0053 0.067 0.0065" type="box" material="RobMat" />
+             <geom name="plug_5" mass="0" pos="-0.0259 0.1 0.12" size="0.0053 0.067 0.0065" type="box" material="tablecube"  />
+             <geom name="plug_6" mass="0." pos="0.0279 0.1 0.12" size="0.0053 0.067 0.0065" type="box" material="tablecube" />
+        
+                
+        
+        
+        
+
+                                      
+                                            <body name="left_inner_knuckle" pos="0.0127 0 0.0693075">
+                                                <inertial pos="0.0170975 -3.93809e-10 0.0224918"   quat="0.947655 0 -0.319297 0" mass="0.0110931" diaginertia="5.59353e-06 3.96549e-06 1.88108e-06" />
+                                                <geom type="mesh" rgba="0.1 0.1 0.1 1" friction="0.8 0.8 0.8" mesh="inner_knuckle_coarse" />
+                                                 <joint name="base_to_lik" class="GRIPPER" pos="0 0 0" axis="0 1 0" limited="true" range="-1 1" />
+
+                                                <body name="left_inner_finger" pos="0.0345853 0 0.045497" >
+                                                    <inertial pos="0.00602756 0 0.00669926"  quat="0.699065 0.106339 0.106339 0.699065" mass="0.00724255" diaginertia="1.70064e-06 1.58577e-06 3.69621e-07" />
+                                                    <geom type="mesh" rgba="0.1 0.1 0.1 1" friction="0.8 0.8 0.8" mesh="inner_finger_coarse" />
+                                                    
+                                                </body>
+                                            </body>
+
+                                            <body name="right_inner_knuckle" pos="-0.0127 0 0.0693075" quat="0 0 0 1">
+                                                <inertial pos="0.0168606 3.93808e-10 0.02267"  quat="0.949317 0 -0.314322 0" mass="0.0110931" diaginertia="5.59353e-06 3.96549e-06 1.88108e-06" />
+                                                <geom type="mesh" rgba="0.1 0.1 0.1 1" friction="0.8 0.8 0.8" mesh="inner_knuckle_coarse" />
+                                                <joint name="base_to_rik" class="GRIPPER" pos="0 0 0" axis="0 1 0" limited="true" range="-1 1" />
+
+                                                <body name="right_inner_finger" pos="0.034106 0 0.0458574">
+                                                    <inertial pos="0.00602756 0 0.00669926"  quat="0.699065 0.106339 0.106339 0.699065" mass="0.00724255" diaginertia="1.70064e-06 1.58577e-06 3.69621e-07" />
+                                                    <geom type="mesh" rgba="0.1 0.1 0.1 1" friction="0.8 0.8 0.8" mesh="inner_finger_coarse" />
+                                                </body>
+                                            </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </body>
+                <body name="base" pos="0 0 0" quat="1.7949e-09 0 0 -1">
+                    <inertial pos="0 0 0" quat="1.7949e-09 0 0 -1" mass="0" diaginertia="0 0 0" />
+                </body>
+        </body>
+
+
+ <!-- plug box-->
+
+         <!-- plug x-->
+        <body name="platt2" pos=".0 .75 0.95"  >
+            
+
+
+            <geom  pos="0 0 0" size="0.1 0.04  0.4"  material="tablecube"  type="ellipsoid"  />
+            
+            <geom name="target_r1" pos=".0355  -0.1 0.2" size="0.0125  0.1  0.03" material="RobMat" type="box"  />
+            <geom name="target_l1" pos="-.0355 -0.1 0.2" size=" 0.0125 0.1 0.03" material="RobMat" type="box" />
+            <geom name="target_u1" pos="0      -0.1 0.23" size="0.048 0.1 0.01"  material="RobMat" type="box"  />
+            <geom                  pos="0.028  -0.1 0.218" size="0.02  0.1 0.015"  material="RobMat" type="box"  />
+            <geom                  pos="-0.028 -0.1 0.218" size="0.02  0.1 0.015"  material="RobMat" type="box"  />
+            <geom name="target_d1" pos="0      -0.1 0.158" size="0.048  0.1 0.01"  material="RobMat" type="box" />
+            <geom                  pos="0.028  -0.1 0.17" size="0.02  0.1 0.015"  material="RobMat" type="box" />
+            <geom                  pos="-0.028 -0.1 0.17" size="0.02  0.1 0.015"  material="RobMat" type="box" />
+                      
+        </body>
+
+
+
+
+         <body name="platt1" pos=".0 -.75 0.95" >
+            <geom name="target_2" pos="0 0 0" size="0.1 0.04  0.4"  material="tablecube"  type="ellipsoid"  />
+            
+            <geom name="target_r" pos=".028 0.1 0.2" size="0.02 0.1  0.02" material="RobMat" type="box"  />
+            <geom name="target_l" pos="-.028 0.1 0.2" size=" 0.02 0.1 0.02" material="RobMat" type="box" />
+            <geom name="target_u" pos="0 0.1 0.218" size="0.048 0.1 0.013"  material="RobMat" type="box"  />
+            <geom name="target_d" pos="0 0.1 0.176" size="0.048 0.1 0.013"  material="RobMat" type="box" />
+        </body>
+
+
+         <body name="platt4" pos=".5 .75 0.95" >
+            <geom name="target_2133" pos="0 0 0" size="0.1 0.04  0.4"  material="tablecube"  type="ellipsoid"  />
+            
+            <geom name="target_r133" pos=".014 0.1 0.2" size="0.01 0.1  0.02" material="RobMat" type="box"  />
+            <geom name="target_l331" pos="-.014 0.1 0.2" size=" 0.01 0.1 0.02" material="RobMat" type="box" />
+            <geom name="target_u133" pos="0 0.1 0.2167" size="0.0238 0.1 0.013"  material="RobMat" type="box"  />
+            <geom name="target_d133" pos="0 0.1 0.1823" size="0.0238 0.1 0.013"  material="RobMat" type="box" />
+        </body>
+
+         <body name="platt5" pos=".9 -.75 0.95" >
+            <geom name="target_2s" pos="0 0 0" size="0.1 0.04  0.4"  material="tablecube"  type="ellipsoid"  />
+            
+            <geom name="target_rs" pos=".033 0.1 0.2" size="0.015 0.1  0.02" material="RobMat" type="box"  />
+            <geom name="target_ls" pos="-.033 0.1 0.2" size=" 0.015 0.1 0.02" material="RobMat" type="box" />
+            <geom name="target_us" pos="0 0.1 0.218" size="0.048 0.1 0.013"  material="RobMat" type="box"  />
+            <geom name="target_ds" pos="0 0.1 0.176" size="0.048 0.1 0.013"  material="RobMat" type="box" />
+        </body>
+
+<!-- plug x-->
+        <!--body name="platt3" pos="-1 0 0.95" quat=" 0  0  0 -1">
+
+            <geom  pos="0 0 0" size="0.1 0.04  0.4"  material="tablecube"  type="ellipsoid"  />
+            
+            <geom name="target_r12" pos=".05  -0.1  0.2"   size="0.0128  0.1  0.02" material="RobMat" type="box"  />
+            <geom name="target_m12" pos=" 0    -0.1  0.2" size=" 0.01 0.1 0.02" material="RobMat" type="box" />
+
+            <geom name="target_r13" pos="-.05  -0.1 0.2"   size="0.0128  0.1  0.02" material="RobMat" type="box"  />
+
+
+
+            <geom name="target_u12" pos="0     -0.1 0.222" size="0.048 0.1 0.013"  material="RobMat" type="box"  />
+            
+            
+            <geom name="target_d12" pos="0      -0.1 0.1741" size="0.048  0.1 0.013"  material="RobMat" type="box" />
+
+        </body-->
+
+         <body name="platt3" pos="-1 0 0.95" quat=" 0  0  0 -1">
+            <geom  pos="0 0 0" size="0.1 0.04  0.4"  material="tablecube"  type="ellipsoid"  />
+            
+            <geom name="target_r12" pos=".054  -0.1 0.2" size="0.015  0.1  0.03" material="RobMat" type="box"  />
+            <geom name="target_l12" pos="0 -0.1 0.2" size=" 0.0155 0.1 0.03" material="RobMat" type="box" />
+
+            <geom name="target_r13" pos="-.054  -0.1 0.2" size="0.015  0.1  0.03" material="RobMat" type="box"  />
+
+
+
+            <geom name="target_u12" pos="0     -0.1 0.235" size="0.069 0.1 0.02"  material="RobMat" type="box"  />
+            
+
+            
+            <geom name="target_d12" pos="0      -0.1 0.165" size="0.069  0.1 0.025"  material="RobMat" type="box" />
+            <geom                  pos="0.051  -0.1 0.222" size="0.018  0.1 0.015"  material="RobMat" type="box"  />
+            
+            <geom                  pos="0.015 -0.1 0.222" size="0.008  0.1 0.015"  material="RobMat" type="box"  />
+            <geom                  pos="0.051  -0.1 0.183" size="0.018  0.1 0.015"  material="RobMat" type="box"  />
+            <geom                  pos="0.015 -0.1 0.183" size="0.008  0.1 0.015"  material="RobMat" type="box"  />
+            
+            
+            
+            <geom                  pos="-0.05  -0.1 0.222" size="0.018  0.1 0.015"  material="RobMat" type="box"  />
+            <geom                  pos="-0.014 -0.1 0.222" size="0.008  0.1 0.015"  material="RobMat" type="box"  />
+            <geom                  pos="-0.05  -0.1 0.183" size="0.018  0.1 0.015"  material="RobMat" type="box"  />
+            <geom                  pos="-0.014 -0.1 0.183" size="0.008  0.1 0.015"  material="RobMat" type="box"  />
+            
+                   
+        </body>
+
+        
+        <!-- plug box-->
+        <body name="platt0" pos="1 0 0.95" quat=" 0  0  0 -1" >
+
+            <geom  pos="0 0 0" size="0.1 0.04  0.4"  material="tablecube"  type="ellipsoid"  />
+            <geom  pos=".035 -0.1 0.2" size="0.0012 0.1  0.011" material="RobMat" type="box" />
+            <geom  pos="0.025 -0.1 0.21" size="0.01 0.1 0.001" type="box" material="RobMat"  />
+            <geom  pos="0.025 -0.1 0.19" size="0.01 0.1 0.001" type="box" material="RobMat" />
+            <geom  pos="-.035 -0.1 0.2" size="0.0012 0.1  0.011" material="RobMat" type="box"  />           
+            <geom  pos="0 -0.1 0.2" size=" 0.02 0.1 0.011" material="RobMat" type="box" />
+            <geom  pos="-0.025 -0.1 0.21" size="0.01 0.1 0.001" type="box" material="RobMat"  />
+            <geom  pos="-0.025 -0.1 0.19" size="0.01 0.1 0.001" type="box" material="RobMat" />
+            <geom  pos=".053 -0.1 0.2" size="0.017 0.1  0.011" material="RobMat" type="box"  />            
+            <geom  pos="-.053 -0.1 0.2" size="0.017 0.1  0.011" material="RobMat" type="box"  />
+            <geom  pos="0 -0.1 0.219" size="0.07 0.1  0.011" material="RobMat" type="box"  />
+            <geom  pos="0 -0.1 0.181" size="0.07 0.1  0.011" material="RobMat" type="box"  />           
+           
+        </body>   
+
+
+    </worldbody>
+
+
+ 
+
+    <equality>
+
+
+        <joint name="fingers" joint1="base_to_rik" joint2="base_to_lik" polycoef="0 1 0 0 0"/>
+    </equality>
+
+
+ 
+    <actuator>
+ 
+        <motor name='shoulder_pan_T' ctrllimited="true" ctrlrange="-3.14159265  3.14159265" joint='shoulder_pan_joint' gear="101"/> <!--range -150 150-->
+        <motor name='shoulder_lift_T' ctrllimited="true" ctrlrange="-3.14159265  3.14159265" joint='shoulder_lift_joint' gear="101"/>
+        <motor name='forearm_T' ctrllimited="true" ctrlrange="-3.14159265 3.14159265" joint='elbow_joint' gear="101" />
+        <motor name='wrist_1_T' ctrllimited="true" ctrlrange="-3.14159265 3.14159265" joint='wrist_1_joint' gear="101"/>  <!--range -28 28-->
+        <motor name='wrist_2_T' ctrllimited="true" ctrlrange="-3.14159265 3.14159265" joint='wrist_2_joint' gear="101"/>
+        <motor name='wrist_3_T' ctrllimited="true" ctrlrange="-3.14159265 3.14159265" joint='wrist_3_joint' gear="101"/>
+
+
+
+        <motor name='gripper_motor' ctrllimited="true" ctrlrange="-1 1" joint='base_to_lik' gear="101"/>
+
+    </actuator>
+    <sensor>
+        <force name="MCPForceSite" site="force"/>    
+        <torque name="MCPTorqueSite" site="tourqe"/>
+    </sensor>
+
+
+</mujoco>

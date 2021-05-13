@@ -1,0 +1,9 @@
+mujoco_py
+numpy
+simple_pid
+termcolor
+ikpy
+pyquaternion
+opencv-python
+matplotlib
+gym
