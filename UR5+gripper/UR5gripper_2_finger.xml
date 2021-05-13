@@ -141,6 +141,7 @@
 
 
 
+        <!--Robot UR5-->
         <body name="box_link" pos="0 0 0.435">
             <!--<geom size=".3 .2 .435" type="box" material="bench_mat"/>-->
             <geom size=".29 .19 .03" pos ="0 0 0.4" type="box" material="bench_mat"/>
@@ -387,9 +388,10 @@
     </equality>
 
 
- 
+    <!--ACTUATORS-->
     <actuator>
- 
+        <!--UR5-->
+
         <motor name='shoulder_pan_T' ctrllimited="true" ctrlrange="-3.14159265  3.14159265" joint='shoulder_pan_joint' gear="101"/> <!--range -150 150-->
         <motor name='shoulder_lift_T' ctrllimited="true" ctrlrange="-3.14159265  3.14159265" joint='shoulder_lift_joint' gear="101"/>
         <motor name='forearm_T' ctrllimited="true" ctrlrange="-3.14159265 3.14159265" joint='elbow_joint' gear="101" />

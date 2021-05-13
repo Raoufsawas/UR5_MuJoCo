@@ -7,3 +7,4 @@ pyquaternion
 opencv-python
 matplotlib
 gym
+tensorflow==1.14 

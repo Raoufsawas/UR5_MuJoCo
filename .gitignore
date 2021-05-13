@@ -1,0 +1,16 @@
+*.sublime-project
+*.sublime-workspace
+MUJOCO_LOG.TXT
+tester*
+__pycache__/
+Joint_values*
+Grasp_*
+DQN.py
+*.pkl
+*_weights
+*.pt
+runs/
+demonstration.py
+Grasping_Agent_REINFORCE.py
+UR5gripper_2_finger_test.xml
+# decorators.py

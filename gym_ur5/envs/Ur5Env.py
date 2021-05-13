@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# Author: Sawas
+#amazn N(W2#pDf758ba?@
+# Author: Abdulraouf
 import random
 import sys
 sys.path.insert(0, '..')
@@ -31,10 +32,10 @@ class UR5Env(gym.Env):
 
         self.f_t =[0,0,0,0,0,0]
         self.privous_coord = [0, 0, 0]
-        self.init = [0.005, -0.438, 1.112]
-        self.coord = [0.005, -0.438, 1.112]
-        self.target = [0.0, -0.46, 1.115]
-        self.object_index=1
+        self.init = [0.005, -0.438, 1.12]
+        self.coord = [0.005, -0.438, 1.12]
+        self.target = [0.0, -0.46, 1.1155]
+        self.object_index = 1
 
 
         self.rotations = {0: 0, 1: 30, 2: 60, 3: 90, 4: -30, 5: -60}
@@ -44,7 +45,6 @@ class UR5Env(gym.Env):
         self.target_reached = 3
         self.correction_value = 0.025
         self.reward = 0
-        self.epoch = 0
         self.wait = 5
         self.step_size = 0.001
         self.controller.show_model_info()
@@ -97,14 +97,34 @@ class UR5Env(gym.Env):
         self.start_time = time.time()
 
         self.geoAxes=[0,1,2]
-        self.depth_target= 0.452
+        self.depth_target= 0.453
         self.controller.change_object_palace(2, self.object_index, 0.95,"platt"+str(self.object_index)) 
-        self.object_index = random.choice([1,2])
-        self.object_index = 5
+        #Training
+        #if self.target_reached   == 4:
+        #    self.target_reached = 0 
+        #    self.controller.change_object_palace(2, self.object_index, 0.95,"platt"+str(self.object_index)) 
+        #	 self.object_index = random.choice([1,2])
+
+        #    self.target[0]=random.uniform(-0.1,0.1)
+        #    self.init[0] = random.uniform(self.target[0] - 0.006, self.target[0] + 0.006)
+        #    self.init[1] = random.uniform(-0.435, -0.43)
+        #    self.init[2] = random.uniform(1.107, 1.1175)
+        #    self.controller.change_object_shape(self.object_index)
+        #    self.controller.change_object_palace(self.target[0], -.75, 0.95,"platt"+str(self.object_index))
+        
+
+        #Select object shape
+        # 0  two rectageles
+        # 1  rectangle
+        # 2  plus
+        # 3 two pluses
+        # 4 rectangel (b)
+        # 5 rectangel (c)
+        self.object_index = 2
         self.target[0]=random.uniform(-0.1,0.1)
         self.init[0] = random.uniform(self.target[0] - 0.006, self.target[0] + 0.006)
-        self.init[1] = random.uniform(-0.436, -0.433)
-        self.init[2] = random.uniform(1.1, 1.12)
+        self.init[1] = random.uniform(-0.435, -0.43)
+        self.init[2] = random.uniform(1.107, 1.1175)
         self.controller.change_object_shape(self.object_index)
         self.controller.change_object_palace(self.target[0], -.75, 0.95,"platt"+str(self.object_index))
         self.coord = self.init.copy()
@@ -137,7 +157,7 @@ class UR5Env(gym.Env):
             and sum(self.dist_T_N) <   0.01 and sum(self.dist_T_N) < sum(self.dist_T_O) \
             else -1 for i in range(3)])
        
-    def check_insertion(self):
+    def check_target(self):
         if self.elvation_dis > 0.02  or self.lateral_dist  > 0.02:
             self.done = True
             self.faild += 1
@@ -157,7 +177,7 @@ class UR5Env(gym.Env):
             print(colored("Avarage Time = "+str(self.total_time/self.score), color='red', attrs=['bold']))
             print(colored("****** TASK ACCOMPLISHED ******", color='green', attrs=['bold']))
 
-    def Check_EF_approaching_target(self):
+    def check_approching_target(self):
         
         self.reward += sum([ 2 if  self.dist_T_N[i] < self.dist_T_O[i] \
             else 0 if  self.dist_T_N[i] == self.dist_T_O[i] else -2 for i in range(3)])
